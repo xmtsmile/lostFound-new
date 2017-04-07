@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.xmt.lost.mapper.UserMapper">
+  
+  <resultMap id="userMap" type="user">
+    <id property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="pass" column="pass" />
+    <result property="realName" column="real_name" />
+    <result property="phone" column="phone" />
+    <result property="secretId" column="secret_id" />
+    <result property="secretAns" column="secret_pass" />
+    <result property="isAdmin" column="is_admin" />
+  </resultMap>
+
+  <select id="getUserById" resultMap="userMap">
+    SELECT
+      *
+    FROM users u
+    WHERE u.id = #{id}
+  </select>
+  
+  <select id="getUserByName" resultMap="userMap">
+    SELECT
+      *
+    FROM users u
+    WHERE u.name = #{name}
+  </select>
+  
+  <select id="authUserByPass" resultMap="userMap">
+    SELECT
+      *
+    FROM users u
+    WHERE u.name = #{name}
+      AND u.pass = MD5(#{pass})
+  </select>
+  
+  <select id="getUsers" resultMap="userMap">
+    SELECT
+      *
+    FROM users u
+    LIMIT #{start}, #{size}
+  </select>
+  
+  <select id="getUsersCount" resultType="long">
+    SELECT
+      *
+    FROM users u
+  </select>
+  
+  <insert id="addUser" parameterType="user">
+    INSERT INTO
+      users
+    VALUES (
+      #{id},
+      #{name},
+      MD5(#{pass}),
+      #{realName},
+      #{phone},
+      #{secretId},
+      #{secretAns},
+      #{isAdmin}
+    )
+  </insert>
+  
+  <update id="modifyUser" parameterType="user">
+    UPDATE users
+    SET
+      name = #{name},
+      pass = MD5(#{pass}),
+      real_name = #{realName},
+      phone = #{phone},
+      secret_id = #{secretId},
+      secret_ans = #{secretAns},
+      is_admin = #{isAdmin}
+    WHERE id = #{id}
+  </update>
+  
+  <update id="updateUserPass">
+    UPDATE users
+    SET
+      pass = MD5(#{newPass})
+    WHERE id = #{userId}
+      AND pass = MD5(#{oldPass})
+  </update>
+  
+  <update id="resetUserPass">
+    UPDATE users
+    SET
+      pass = MD5(#{newPass})
+    WHERE name = #{name}
+      AND secretId = #{secretId}
+      AND secretAns = #{secretAns}
+  </update>
+  
+  <delete id="deleteUsers" parameterType="list">
+    DELETE FROM users
+    <if test="userIds != null and userIds.size != 0">
+      WHERE id IN
+      <foreach collection="list" item="userId" open="(" separator="," close=")">
+        #{userId}
+      </foreach>
+    </if>
+  </delete>
+  
+</mapper>

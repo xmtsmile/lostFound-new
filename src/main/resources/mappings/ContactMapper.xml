@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.xmt.lost.mapper.ContactMapper">
+  
+  <insert id="addContact" parameterType="contact">
+    INSERT INTO
+      contacts
+    VALUES (
+      #{id},
+      #{psnName},
+      #{phone},
+      #{email},
+      #{qq},
+      #{address}
+    )
+  </insert>
+  
+  <update id="modifyContact" parameterType="contact">
+    UPDATE contacts
+    SET
+      psn_name = #{psnName},
+      phone = #{phone},
+      email = #{email},
+      qq = #{qq},
+      address = #{address}
+    WHERE id = #{id}
+  </update>
+  
+  <delete id="deleteContacts" parameterType="list">
+    DELETE FROM contacts
+    <if test="contactIds != null and contactIds.size != 0">
+      WHERE id IN
+      <foreach collection="list" item="contactId" open="(" separator="," close=")">
+        #{contactId}
+      </foreach>
+    </if>
+  </delete>
+  
+</mapper>

@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.xmt.lost.mapper.PostMapper">
+  
+  <resultMap id="postMap" type="post">
+    <id property="id" column="id" />
+    <result property="title" column="name" />
+    <result property="userId" column="user_id" />
+    <result property="objectId" column="object_id" />
+    <result property="contactId" column="contact_id" />
+    <result property="objDetail" column="obj_detail" />
+    <result property="locDetail" column="loc_detail" />
+  </resultMap>
+  
+  <select id="getPostById" resultMap="postMap">
+    SELECT
+      *
+    FROM posts p
+    WHERE p.id = #{id}
+  </select>
+  
+  <select id="getPostsWithCondition" resultMap="postMap">
+    SELECT
+      *
+    FROM posts p
+    INNER JOIN objects o ON p.object_id = o.id
+    <where>
+      <if test="source != null and source == 0">
+        o.status = 0 OR o.status = 1
+      </if>
+      <if test="source != null and source == 1">
+        o.status = 2 OR o.status = 3
+      </if>
+      <if test="kindId != null">
+        p.skind_id = #{kindId}
+      </if>
+      <if test="time != null">
+        o.record_time BETWEEN #{btime} AND #{etime}
+      </if>
+      <if test="userId != null">
+        p.user_id = #{userId}
+      </if>
+    </where>
+    LIMIT #{start}, #{size}
+  </select>
+  
+  <select id="getPostsCountWithCondition" resultType="long">
+    SELECT
+      COUNT(1)
+    FROM posts p
+    <where>
+      <if test="source != null and source == 0">
+        o.status = 0 OR o.status = 1
+      </if>
+      <if test="source != null and source == 1">
+        o.status = 2 OR o.status = 3
+      </if>
+      <if test="kindId != null">
+        p.skind_id = #{kindId}
+      </if>
+      <if test="time != null">
+        o.record_time BETWEEN #{btime} AND #{etime}
+      </if>
+      <if test="userId != null">
+        p.user_id = #{userId}
+      </if>
+    </where>
+  </select>
+  
+  <select id="lostCount" resultType="long">
+    SELECT
+      COUNT(1)
+    FROM posts p
+    INNER JOIN objects o ON p.object_id = o.id
+    WHERE
+      o.status = 0 OR o.status = 1
+  </select>
+  
+  <select id="foundCount" resultType="long">
+    SELECT
+      COUNT(1)
+    FROM posts p
+    INNER JOIN objects o ON p.object_id = o.id
+    WHERE
+      o.status = 2 OR o.status = 3
+  </select>
+  
+  <select id="backCount" resultType="long">
+    SELECT
+      COUNT(1)
+    FROM posts p
+    INNER JOIN objects o ON p.object_id = o.id
+    WHERE
+      o.status = 1 OR o.status = 3
+  </select>
+  
+  <insert id="addPost" parameterType="post">
+    INSERT INTO
+      posts
+    VALUES (
+      #{id},
+      #{title},
+      #{userId},
+      #{objectId},
+      #{contactId},
+      #{objDetail},
+      #{locDetail}
+    )
+  </insert>
+  
+  <update id="modifyPost" parameterType="post">
+    UPDATE posts
+    SET
+      title = #{title},
+      obj_detail = #{objDetail},
+      loc_detail = #{locDetail}
+    WHERE id = #{id}
+  </update>
+  
+  <delete id="deletePosts" parameterType="list">
+    DELETE FROM posts
+    <if test="postIds != null and postIds.size != 0">
+      WHERE id IN
+      <foreach collection="list" item="postId" open="(" separator="," close=")">
+        #{postId}
+      </foreach>
+    </if>
+  </delete>
+  
+</mapper>

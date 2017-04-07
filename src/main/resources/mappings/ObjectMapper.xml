@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.xmt.lost.mapper.ObjectMapper">
+  
+  <insert id="addObject" parameterType="xobject">
+    INSERT INTO
+      objects
+    VALUES (
+      #{id},
+      #{fkind_id},
+      #{skind_id},
+      #{status},
+      #{record_time},
+      #{pic_path}
+    )
+  </insert>
+  
+  <update id="modifyObject" parameterType="xobject">
+    UPDATE objects
+    SET
+      fkind_id = #{fkindId},
+      skind_id = #{skindId},
+      status = #{status},
+      record_time = #{recordTime},
+      pic_path = #{picPath}
+    WHERE id = #{id}
+  </update>
+  
+  <update id="getObjectBack" parameterType="string">
+    UPDATE objects
+    SET
+      status = 3
+    WHERE id = #{id}
+  </update>
+  
+  <update id="returnObjectBack" parameterType="string">
+    UPDATE objects
+    SET
+      status = 1
+    WHERE id = #{id}
+  </update>
+  
+  <delete id="deleteObjects" parameterType="list">
+    DELETE FROM objects
+    <if test="objectIds != null and objectIds.size != 0">
+      WHERE id IN
+      <foreach collection="list" item="objectId" open="(" separator="," close=")">
+        #{objectId}
+      </foreach>
+    </if>
+  </delete>
+  
+</mapper>

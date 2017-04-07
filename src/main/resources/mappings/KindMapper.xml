@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="io.xmt.lost.mapper.KindMapper">
+  
+  <resultMap id="kindMap" type="kind">
+    <id property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="system" column="system" />
+    <result property="level" column="level" />
+  </resultMap>
+
+  <select id="getKindById" resultMap="kindMap">
+    SELECT
+      *
+    FROM kinds k
+    WHERE k.id = #{id}
+  </select>
+  
+  <select id="getKinds" resultMap="kindMap">
+    SELECT
+      *
+    FROM kinds k
+    LIMIT #{start}, #{size}
+  </select>
+  
+  <select id="getKindsCount" resultType="long">
+    SELECT
+      COUNT(1)
+    FROM kinds k
+  </select>
+  
+  <insert id="addKind" parameterType="kind">
+    INSERT INTO
+      kinds
+    VALUES (
+      #{id},
+      #{name},
+      #{system},
+      #{level}
+    )
+  </insert>
+  
+  <update id="modifyKind" parameterType="kind">
+    UPDATE kinds
+    SET
+      name = #{name}
+    WHERE id = #{id}
+  </update>
+  
+  <delete id="deleteKinds" parameterType="list">
+    DELETE FROM kinds
+    <if test="kindIds != null and kindIds.size != 0">
+      WHERE id IN
+      <foreach collection="list" item="kindId" open="(" separator="," close=")">
+        #{kindId}
+      </foreach>
+      AND system != 1
+    </if>
+  </delete>
+  
+</mapper>
