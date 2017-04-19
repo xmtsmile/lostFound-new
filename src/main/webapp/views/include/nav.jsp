@@ -1,4 +1,4 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
     <title>失物招领系统网站</title>
@@ -11,7 +11,7 @@
 <body>
 <div id="header" class="header navbar-fixed-top sm-bottom">
     <div class="container">
-        <h1 class="logo"><a href="../Home.jsp"><span class="logo-text">失物招领</span></a></h1>
+        <h1 class="logo"><a href="../Home.jsp"><span class="logo-text">失物招领1</span></a></h1>
         <nav class="main-nav navbar-right" role="navigation">
             <div class="navbar-header">
                 <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-collapse">
